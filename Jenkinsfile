@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/NobleGeek/trackit-minor-project.git'
+               
             }
         }
         stage('Install Dependencies') {
