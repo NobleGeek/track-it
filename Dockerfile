@@ -1,30 +1,24 @@
-# Install dependencies only when needed
-FROM node:18-alpine AS deps
+# Use official Node.js image
+FROM node:18-alpine
+
+# Set working directory
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Copy package.json and lock file
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Rebuild the source code only when needed
-FROM node:18-alpine AS builder
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
+# Copy rest of the code
 COPY . .
 
+# Build Next.js app
 RUN npm run build
 
-# Production image, copy artifacts from builder
-FROM node:18-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV production
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
+# Expose the port Next.js runs on
 EXPOSE 3000
 
+# Start the application
 CMD ["npm", "start"]
+
